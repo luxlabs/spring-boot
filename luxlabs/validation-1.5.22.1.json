@@ -1,0 +1,52 @@
+{
+  "version": "1.5.22.1.RELEASE",
+  "upstream_tag": "v1.5.22.RELEASE",
+  "upstream_commit": "34c62cc05919259cf75b925f88465638d1744b75",
+  "tomcat": "9.0.123",
+  "servlet_api": "4.0.1",
+  "tested_utc": "2026-11-11T17:05:29.338683+00:00",
+  "toolchain": {
+    "maven": "3.10.0",
+    "source_build": "Temurin 8.0.504",
+    "lifecycle": "Temurin 11.0.33"
+  },
+  "source_build": {
+    "tests": {
+      "passed": 165,
+      "failed": 0,
+      "skipped": 0
+    },
+    "selection": [
+      "TomcatEmbeddedServletContainerFactoryTests",
+      "Tomcat9SslDefaultsTests",
+      "ServerPropertiesTests"
+    ],
+    "static_checks": "Java format, Checkstyle, enforcer and animal-sniffer passed"
+  },
+  "lifecycle": {
+    "cases": [
+      {
+        "name": "http-defaults",
+        "status": "passed",
+        "checks": 15
+      },
+      {
+        "name": "http-custom",
+        "status": "passed",
+        "checks": 28
+      },
+      {
+        "name": "tls-default-ciphers",
+        "status": "passed",
+        "checks": 20
+      },
+      {
+        "name": "tls-custom",
+        "status": "passed",
+        "checks": 31
+      }
+    ],
+    "checks": 94
+  },
+  "scope": "Selected source tests and four explicit Boot web auto-configuration contexts. No complete upstream suite or application business-process certification."
+}

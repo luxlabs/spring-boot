@@ -358,9 +358,8 @@ public class TomcatEmbeddedServletContainerFactory extends AbstractEmbeddedServl
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void configureCompressibleMimeTypes(AbstractHttp11Protocol<?> protocol, Compression compression) {
-		protocol.setCompressableMimeType(StringUtils.arrayToCommaDelimitedString(compression.getMimeTypes()));
+		protocol.setCompressibleMimeType(StringUtils.arrayToCommaDelimitedString(compression.getMimeTypes()));
 	}
 
 	/**
@@ -376,7 +375,9 @@ public class TomcatEmbeddedServletContainerFactory extends AbstractEmbeddedServl
 		protocol.setKeyPass(ssl.getKeyPassword());
 		protocol.setKeyAlias(ssl.getKeyAlias());
 		String ciphers = StringUtils.arrayToCommaDelimitedString(ssl.getCiphers());
-		protocol.setCiphers(StringUtils.hasText(ciphers) ? ciphers : null);
+		if (StringUtils.hasText(ciphers)) {
+			protocol.setCiphers(ciphers);
+		}
 		if (ssl.getEnabledProtocols() != null) {
 			try {
 				for (SSLHostConfig sslHostConfig : protocol.findSslHostConfigs()) {

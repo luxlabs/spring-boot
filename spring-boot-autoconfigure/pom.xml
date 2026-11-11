@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-parent</artifactId>
-		<version>1.5.22.RELEASE</version>
+		<version>1.5.22.1.RELEASE</version>
 		<relativePath>../spring-boot-parent</relativePath>
 	</parent>
 	<artifactId>spring-boot-autoconfigure</artifactId>
 	<name>Spring Boot AutoConfigure</name>
-	<description>Spring Boot AutoConfigure</description>
-	<url>https://projects.spring.io/spring-boot/</url>
+	<description>LuxLabs Tomcat 9 compatibility fork of Spring Boot 1.5.22.RELEASE</description>
+	<url>https://github.com/luxlabs/spring-boot/tree/release/1.5.22.1</url>
 	<organization>
 		<name>Pivotal Software, Inc.</name>
 		<url>https://www.spring.io</url>

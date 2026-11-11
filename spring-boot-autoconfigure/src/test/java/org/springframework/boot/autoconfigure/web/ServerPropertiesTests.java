@@ -801,8 +801,8 @@ public class ServerPropertiesTests {
 	}
 
 	@Test
-	public void tomcatMaxConnectionsMatchesProtocolDefault() throws Exception {
-		assertThat(this.properties.getTomcat().getMaxConnections()).isEqualTo(getDefaultProtocol().getMaxConnections());
+	public void tomcatMaxConnectionsPreservesBoot15Default() throws Exception {
+		assertThat(this.properties.getTomcat().getMaxConnections()).isEqualTo(10000);
 	}
 
 	@Test
@@ -852,9 +852,15 @@ public class ServerPropertiesTests {
 	}
 
 	@Test
-	public void tomcatInternalProxiesMatchesDefault() {
-		assertThat(this.properties.getTomcat().getInternalProxies())
-				.isEqualTo(new RemoteIpValve().getInternalProxies());
+	public void tomcatInternalProxiesPreserveBoot15TrustedNetworks() {
+		String proxies = this.properties.getTomcat().getInternalProxies();
+		assertThat("192.168.1.1".matches(proxies)).isTrue();
+		assertThat("10.0.0.1".matches(proxies)).isTrue();
+		assertThat("172.16.0.1".matches(proxies)).isTrue();
+		assertThat("::1".matches(proxies)).isTrue();
+		assertThat("100.64.0.1".matches(proxies)).isFalse();
+		assertThat("fc00::1".matches(proxies)).isFalse();
+		assertThat("8.8.8.8".matches(proxies)).isFalse();
 	}
 
 	@Test

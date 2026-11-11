@@ -84,7 +84,6 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willAnswer;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
@@ -202,8 +201,8 @@ public class TomcatEmbeddedServletContainerFactoryTests extends AbstractEmbedded
 		TomcatEmbeddedServletContainerFactory factory = getFactory();
 		Connector[] listeners = new Connector[4];
 		for (int i = 0; i < listeners.length; i++) {
-			Connector connector = mock(Connector.class);
-			given(connector.getState()).willReturn(LifecycleState.STOPPED);
+			Connector connector = new Connector();
+			connector.setPort(0);
 			listeners[i] = connector;
 		}
 		factory.addAdditionalTomcatConnectors(listeners);
