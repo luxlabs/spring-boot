@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springframework.boot</groupId>
 	<artifactId>spring-boot-build</artifactId>
-	<version>1.5.22.RELEASE</version>
+	<version>1.5.22.1.RELEASE</version>
 	<packaging>pom</packaging>
 	<name>Spring Boot Build</name>
 	<description>Spring Boot Build</description>
@@ -19,7 +19,7 @@
 		</license>
 	</licenses>
 	<scm>
-		<url>https://github.com/spring-projects/spring-boot</url>
+		<url>https://github.com/luxlabs/spring-boot</url>
 	</scm>
 	<developers>
 		<developer>
@@ -68,6 +68,17 @@
 		</pluginManagement>
 	</build>
 	<profiles>
+		<profile>
+			<id>luxlabs-tomcat9</id>
+			<modules>
+				<module>spring-boot-dependencies</module>
+				<module>spring-boot-parent</module>
+				<module>spring-boot-tools/spring-boot-test-support</module>
+				<module>spring-boot</module>
+				<module>spring-boot-test</module>
+				<module>spring-boot-autoconfigure</module>
+			</modules>
+		</profile>
 		<profile>
 			<id>default</id>
 			<activation>

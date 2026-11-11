@@ -893,7 +893,7 @@ public class ServerProperties implements EmbeddedServletContainerCustomizer, Env
 					ProtocolHandler handler = connector.getProtocolHandler();
 					if (handler instanceof AbstractProtocol) {
 						AbstractProtocol<?> protocol = (AbstractProtocol<?>) handler;
-						protocol.setBacklog(Tomcat.this.acceptCount);
+						protocol.setAcceptCount(Tomcat.this.acceptCount);
 					}
 				}
 
