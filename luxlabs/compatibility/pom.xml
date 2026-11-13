@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>luxlabs.boot</groupId>
 	<artifactId>tomcat9-lifecycle-fixture</artifactId>
-	<version>1.5.22.1.RELEASE</version>
+	<version>1.5.22.2.RELEASE</version>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
-				<version>1.5.22.1.RELEASE</version>
+				<version>1.5.22.2.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

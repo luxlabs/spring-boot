@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springframework.boot</groupId>
 	<artifactId>spring-boot-dependencies</artifactId>
-	<version>1.5.22.1.RELEASE</version>
+	<version>1.5.22.2.RELEASE</version>
 	<packaging>pom</packaging>
 	<name>Spring Boot Dependencies</name>
 	<description>Spring Boot Dependencies</description>
@@ -224,24 +224,24 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot</artifactId>
-				<version>1.5.22.1.RELEASE</version>
+				<version>1.5.22.2.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot</artifactId>
 				<type>test-jar</type>
-				<version>1.5.22.1.RELEASE</version>
+				<version>1.5.22.2.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-test</artifactId>
-				<version>1.5.22.1.RELEASE</version>
+				<version>1.5.22.2.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-test</artifactId>
 				<type>test-jar</type>
-				<version>1.5.22.1.RELEASE</version>
+				<version>1.5.22.2.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
@@ -261,7 +261,7 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-autoconfigure</artifactId>
-				<version>1.5.22.1.RELEASE</version>
+				<version>1.5.22.2.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
