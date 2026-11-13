@@ -1,0 +1,83 @@
+{
+  "version": "1.5.22.2.RELEASE",
+  "previous_version": "1.5.22.1.RELEASE",
+  "upstream_tag": "v1.5.22.RELEASE",
+  "upstream_commit": "34c62cc05919259cf75b925f88465638d1744b75",
+  "tomcat": "9.0.123",
+  "servlet_api": "4.0.1",
+  "minimum_java": "8",
+  "tested_utc": "2026-11-13T18:27:50Z",
+  "toolchain": {
+    "maven": "3.10.0",
+    "source_build": "Temurin 8.0.504",
+    "lifecycle": "Temurin 11.0.33"
+  },
+  "security_fixes": [
+    {
+      "cve": "CVE-2022-27772",
+      "change": "AbstractEmbeddedServletContainerFactory.createTempDir and SpringBootMockServletContext use Files.createTempDirectory",
+      "upstream_commit": "667ccdae84822072f9ea1a27ed5c77964c71002d"
+    },
+    {
+      "cve": "CVE-2026-40973",
+      "change": "ApplicationTemp creates rwx------ directories and rejects an existing entry that is not a directory, is a symbolic link, has other permissions or another owner",
+      "model": "Spring Boot 3.5.14 ApplicationTemp"
+    }
+  ],
+  "source_build": {
+    "tests": {
+      "passed": 183,
+      "failed": 0,
+      "skipped": 0
+    },
+    "selection": [
+      "TomcatEmbeddedServletContainerFactoryTests",
+      "Tomcat9SslDefaultsTests",
+      "ServerPropertiesTests",
+      "EmbeddedServletContainerFactoryTempDirTests",
+      "ApplicationTempTests",
+      "SpringBootMockServletContextTests"
+    ],
+    "static_checks": "Java format, Checkstyle, enforcer and animal-sniffer passed"
+  },
+  "module_suites": {
+    "spring-boot": {
+      "tests": 1547,
+      "errors": 2,
+      "skipped": 4
+    },
+    "spring-boot-test": {
+      "tests": 520,
+      "errors": 3,
+      "skipped": 1
+    },
+    "errors": "The same five ModifiedClassPathRunner tests fail on 1.5.22.1.RELEASE in an offline build: CompressionTests, Jetty8JettyEmbeddedServletContainerFactoryTests, Mockito21Tests, Mockito22Tests and Mockito25Tests resolve Tomcat 8.5.24, Jetty 8.1.15 and Mockito 2.x at run time",
+    "regressions": 0
+  },
+  "lifecycle": {
+    "cases": [
+      {
+        "name": "http-defaults",
+        "status": "passed",
+        "checks": 15
+      },
+      {
+        "name": "http-custom",
+        "status": "passed",
+        "checks": 28
+      },
+      {
+        "name": "tls-default-ciphers",
+        "status": "passed",
+        "checks": 20
+      },
+      {
+        "name": "tls-custom",
+        "status": "passed",
+        "checks": 31
+      }
+    ],
+    "checks": 94
+  },
+  "scope": "Selected source tests, complete spring-boot and spring-boot-test suites compared with 1.5.22.1.RELEASE, and four explicit Boot web auto-configuration contexts. No complete upstream suite or application business-process certification. The Windows behaviour of ApplicationTemp is not tested."
+}
