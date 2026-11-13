@@ -6,7 +6,7 @@
   "tomcat": "9.0.123",
   "servlet_api": "4.0.1",
   "minimum_java": "8",
-  "tested_utc": "2026-11-13T18:27:50Z",
+  "tested_utc": "2026-11-13T20:33:41Z",
   "toolchain": {
     "maven": "3.10.0",
     "source_build": "Temurin 8.0.504",
@@ -20,13 +20,13 @@
     },
     {
       "cve": "CVE-2026-40973",
-      "change": "ApplicationTemp creates rwx------ directories and rejects an existing entry that is not a directory, is a symbolic link, has other permissions or another owner",
+      "change": "ApplicationTemp creates rwx------ directories and rejects an existing or concurrently created entry that is not a directory, is a symbolic link, has other permissions or another owner; a directory created concurrently by another caller passes the same checks instead of failing",
       "model": "Spring Boot 3.5.14 ApplicationTemp"
     }
   ],
   "source_build": {
     "tests": {
-      "passed": 183,
+      "passed": 187,
       "failed": 0,
       "skipped": 0
     },
@@ -42,7 +42,7 @@
   },
   "module_suites": {
     "spring-boot": {
-      "tests": 1547,
+      "tests": 1551,
       "errors": 2,
       "skipped": 4
     },
@@ -51,7 +51,12 @@
       "errors": 3,
       "skipped": 1
     },
-    "errors": "The same five ModifiedClassPathRunner tests fail on 1.5.22.1.RELEASE in an offline build: CompressionTests, Jetty8JettyEmbeddedServletContainerFactoryTests, Mockito21Tests, Mockito22Tests and Mockito25Tests resolve Tomcat 8.5.24, Jetty 8.1.15 and Mockito 2.x at run time",
+    "spring-boot-test-support": {
+      "tests": 4,
+      "errors": 1,
+      "skipped": 0
+    },
+    "errors": "The same six ModifiedClassPathRunner tests fail on 1.5.22.1.RELEASE in an offline build: CompressionTests, Jetty8JettyEmbeddedServletContainerFactoryTests, Mockito21Tests, Mockito22Tests, Mockito25Tests and ModifiedClassPathRunnerOverridesTests resolve Tomcat 8.5.24, Jetty 8.1.15, Mockito 2.x and Spring 4.1.0 at run time",
     "regressions": 0
   },
   "lifecycle": {
@@ -79,5 +84,6 @@
     ],
     "checks": 94
   },
-  "scope": "Selected source tests, complete spring-boot and spring-boot-test suites compared with 1.5.22.1.RELEASE, and four explicit Boot web auto-configuration contexts. No complete upstream suite or application business-process certification. The Windows behaviour of ApplicationTemp is not tested."
+  "scope": "Selected source tests, complete spring-boot and spring-boot-test suites compared with 1.5.22.1.RELEASE, and four explicit Boot web auto-configuration contexts. No complete upstream suite or application business-process certification. The Windows behaviour of ApplicationTemp is not tested.",
+  "generated_resources": "Log4j2Plugins.dat (spring-boot), spring-configuration-metadata.json and spring-autoconfigure-metadata.properties (spring-boot-autoconfigure) have the same entries as upstream v1.5.22.RELEASE in a build-dependent order; the properties file also carries the build date. All other jar resources are identical to upstream apart from the manifest, the Maven metadata and luxlabs-fork.properties"
 }
