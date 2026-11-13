@@ -707,6 +707,10 @@
 									<target>
 										<mkdir dir="${project.build.directory}/luxlabs-build" />
 										<javac srcdir="${luxlabs.dir}/tools" destdir="${project.build.directory}/luxlabs-build" includeantruntime="false" encoding="UTF-8" source="1.8" target="1.8" fork="true" />
+										<java classname="UpstreamResourcesTests" classpath="${project.build.directory}/luxlabs-build" fork="true" failonerror="true">
+											<arg value="${luxlabs.dir}/upstream-resources" />
+											<arg value="${project.build.directory}/luxlabs-tests" />
+										</java>
 										<java classname="UpstreamResources" classpath="${project.build.directory}/luxlabs-build" fork="true" failonerror="true">
 											<arg value="${project.build.outputDirectory}" />
 											<arg value="${luxlabs.dir}/upstream-resources/${project.artifactId}" />
