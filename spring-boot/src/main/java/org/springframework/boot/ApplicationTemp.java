@@ -18,6 +18,7 @@ package org.springframework.boot;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -45,7 +46,8 @@ import org.springframework.util.StringUtils;
  * {@code rwx------} permissions; otherwise an {@link IllegalStateException} is thrown.
  * Without POSIX attributes (for example on Windows) directories are created with the
  * default access control of {@code java.io.tmpdir} and only their type and owner are
- * checked, the latter where {@link Files#getOwner} is supported.
+ * checked, the latter where {@link Files#getOwner} is supported. A directory created
+ * concurrently by another caller is subject to the same checks.
  *
  * @author Phillip Webb
  * @since 1.3.0
@@ -131,33 +133,46 @@ public class ApplicationTemp {
 		Path path = dir.toPath();
 		try {
 			FileSystem fileSystem = path.getFileSystem();
-			if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
-				Files.createDirectory(path, asFileAttributes(fileSystem, DIRECTORY_PERMISSIONS));
+			if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS) && tryCreateDirectory(path, fileSystem)) {
+				return dir;
 			}
-			else {
-				if (supportsPosixView(fileSystem)) {
-					PosixFileAttributes attributes = Files.readAttributes(path, PosixFileAttributes.class,
-							LinkOption.NOFOLLOW_LINKS);
-					Assert.state(attributes.isDirectory(), "'" + path + "' already exists but it is not a directory");
-					Assert.state(DIRECTORY_PERMISSIONS.equals(attributes.permissions()),
-							"Existing directory '" + path + "' does not have the permissions " + DIRECTORY_PERMISSIONS);
-					assertDirectoryOwnership(attributes.owner(), path);
-				}
-				else {
-					Assert.state(Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS),
-							"'" + path + "' already exists but it is not a directory");
-					try {
-						assertDirectoryOwnership(Files.getOwner(path, LinkOption.NOFOLLOW_LINKS), path);
-					}
-					catch (UnsupportedOperationException ex) {
-						// Ownership check not supported. Continue.
-					}
-				}
-			}
+			assertExistingDirectory(path, fileSystem);
 			return dir;
 		}
 		catch (IOException ex) {
 			throw new IllegalStateException("Unable to create application temp directory " + path, ex);
+		}
+	}
+
+	private boolean tryCreateDirectory(Path path, FileSystem fileSystem) throws IOException {
+		try {
+			Files.createDirectory(path, asFileAttributes(fileSystem, DIRECTORY_PERMISSIONS));
+			return true;
+		}
+		catch (FileAlreadyExistsException ex) {
+			// Created meanwhile by another caller: check it as an existing entry
+			return false;
+		}
+	}
+
+	private void assertExistingDirectory(Path path, FileSystem fileSystem) throws IOException {
+		if (supportsPosixView(fileSystem)) {
+			PosixFileAttributes attributes = Files.readAttributes(path, PosixFileAttributes.class,
+					LinkOption.NOFOLLOW_LINKS);
+			Assert.state(attributes.isDirectory(), "'" + path + "' already exists but it is not a directory");
+			Assert.state(DIRECTORY_PERMISSIONS.equals(attributes.permissions()),
+					"Existing directory '" + path + "' does not have the permissions " + DIRECTORY_PERMISSIONS);
+			assertDirectoryOwnership(attributes.owner(), path);
+		}
+		else {
+			Assert.state(Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS),
+					"'" + path + "' already exists but it is not a directory");
+			try {
+				assertDirectoryOwnership(Files.getOwner(path, LinkOption.NOFOLLOW_LINKS), path);
+			}
+			catch (UnsupportedOperationException ex) {
+				// Ownership check not supported. Continue.
+			}
 		}
 	}
 

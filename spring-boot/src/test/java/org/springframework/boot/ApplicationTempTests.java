@@ -20,11 +20,25 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.nio.file.attribute.UserPrincipal;
+import java.security.Permission;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Assume;
@@ -178,6 +192,138 @@ public class ApplicationTempTests {
 		assertGetDirThrows(temp, null, "is not owned by another-user");
 	}
 
+	@Test
+	public void getSubDirConcurrentlyOnTheSameInstanceReturnsTheCreatedDirectory() throws Exception {
+		final ApplicationTemp temp = new ApplicationTemp();
+		this.applicationTempDir = temp.getDir();
+		File expected = new File(temp.getDir(), "servlet-sessions");
+		Callable<Object> getSubDir = new Callable<Object>() {
+
+			@Override
+			public Object call() {
+				return temp.getDir("servlet-sessions");
+			}
+
+		};
+		assertThat(getConcurrently(expected, getSubDir, getSubDir)).containsExactly(expected, expected);
+		assertOwnerOnlyDirectory(expected);
+	}
+
+	@Test
+	public void getDirConcurrentlyOnTwoInstancesReturnsTheCreatedDirectory() throws Exception {
+		File expected = new ApplicationTemp().getDir();
+		this.applicationTempDir = expected;
+		Files.delete(expected.toPath());
+		final ApplicationTemp first = new ApplicationTemp();
+		final ApplicationTemp second = new ApplicationTemp();
+		assertThat(getConcurrently(expected, new Callable<Object>() {
+
+			@Override
+			public Object call() {
+				return first.getDir();
+			}
+
+		}, new Callable<Object>() {
+
+			@Override
+			public Object call() {
+				return second.getDir();
+			}
+
+		})).containsExactly(expected, expected);
+		assertOwnerOnlyDirectory(expected);
+	}
+
+	@Test
+	public void getSubDirWhenSymbolicLinkIsCreatedConcurrentlyThrows() throws Exception {
+		ApplicationTemp temp = new ApplicationTemp();
+		this.applicationTempDir = temp.getDir();
+		File subDir = new File(temp.getDir(), "sub");
+		Planter planter = new Planter(subDir.toPath(), this.temp.newFolder().toPath(), null);
+		Object result = getWithSecurityManager(planter, temp, "sub");
+		assertThat(result).isInstanceOf(IllegalStateException.class);
+		assertThat(((IllegalStateException) result).getMessage()).contains("already exists but it is not a directory");
+		assertThat(planter.planted).isTrue();
+	}
+
+	@Test
+	public void getSubDirWhenDirectoryWithWiderPermissionsIsCreatedConcurrentlyThrows() throws Exception {
+		assumePosix();
+		ApplicationTemp temp = new ApplicationTemp();
+		this.applicationTempDir = temp.getDir();
+		File subDir = new File(temp.getDir(), "sub");
+		Planter planter = new Planter(subDir.toPath(), null, "rwxrwxrwx");
+		Object result = getWithSecurityManager(planter, temp, "sub");
+		assertThat(result).isInstanceOf(IllegalStateException.class);
+		assertThat(((IllegalStateException) result).getMessage()).contains("does not have the permissions");
+		assertThat(planter.planted).isTrue();
+	}
+
+	/**
+	 * Run two calls that both see the location missing and then reach its creation
+	 * together.
+	 */
+	private List<Object> getConcurrently(File location, Callable<Object> first, Callable<Object> second)
+			throws Exception {
+		Rendezvous rendezvous = new Rendezvous(location.toPath());
+		ExecutorService executor = Executors.newFixedThreadPool(2);
+		List<Object> results = new ArrayList<Object>();
+		try {
+			installSecurityManager(rendezvous);
+			try {
+				List<Future<Object>> futures = new ArrayList<Future<Object>>();
+				futures.add(executor.submit(first));
+				futures.add(executor.submit(second));
+				for (Future<Object> future : futures) {
+					try {
+						results.add(future.get(30, TimeUnit.SECONDS));
+					}
+					catch (ExecutionException ex) {
+						results.add(ex.getCause());
+					}
+				}
+			}
+			finally {
+				System.setSecurityManager(null);
+			}
+		}
+		finally {
+			executor.shutdownNow();
+		}
+		assertThat(rendezvous.arrivals).as("Calls reaching the creation of " + location).hasSize(2);
+		return results;
+	}
+
+	private Object getWithSecurityManager(SecurityManager securityManager, ApplicationTemp temp, String subDir) {
+		installSecurityManager(securityManager);
+		try {
+			return temp.getDir(subDir);
+		}
+		catch (IllegalStateException ex) {
+			return ex;
+		}
+		finally {
+			System.setSecurityManager(null);
+		}
+	}
+
+	private void installSecurityManager(SecurityManager securityManager) {
+		Assume.assumeTrue("No security manager installed", System.getSecurityManager() == null);
+		try {
+			System.setSecurityManager(securityManager);
+		}
+		catch (UnsupportedOperationException ex) {
+			Assume.assumeNoException("Security manager not supported", ex);
+		}
+	}
+
+	private void assertOwnerOnlyDirectory(File dir) throws IOException {
+		assertThat(Files.isDirectory(dir.toPath(), LinkOption.NOFOLLOW_LINKS)).isTrue();
+		if (dir.toPath().getFileSystem().supportedFileAttributeViews().contains("posix")) {
+			assertThat(getPermissions(dir.toPath())).isEqualTo("rwx------");
+		}
+	}
+
 	private void assertGetDirThrows(ApplicationTemp temp, String subDir, String message) {
 		try {
 			File dir = (subDir != null) ? temp.getDir(subDir) : temp.getDir();
@@ -186,6 +332,10 @@ public class ApplicationTempTests {
 		catch (IllegalStateException ex) {
 			assertThat(ex.getMessage()).contains(message);
 		}
+	}
+
+	private static boolean isLocation(String file, Path location) {
+		return Paths.get(file).toAbsolutePath().equals(location.toAbsolutePath());
 	}
 
 	private void createSymbolicLink(File link) throws IOException {
@@ -212,6 +362,95 @@ public class ApplicationTempTests {
 			Set<PosixFilePermission> set = PosixFilePermissions.fromString(permissions);
 			Files.setPosixFilePermissions(path, set);
 		}
+	}
+
+	/**
+	 * Holds the first two threads that are about to create a location until both have
+	 * arrived.
+	 */
+	private static class Rendezvous extends SecurityManager {
+
+		private final Path location;
+
+		private final CyclicBarrier barrier = new CyclicBarrier(2);
+
+		private final Set<Thread> arrivals = Collections.synchronizedSet(new HashSet<Thread>());
+
+		Rendezvous(Path location) {
+			this.location = location;
+		}
+
+		@Override
+		public void checkPermission(Permission perm) {
+		}
+
+		@Override
+		public void checkPermission(Permission perm, Object context) {
+		}
+
+		@Override
+		public void checkWrite(String file) {
+			if (isLocation(file, this.location) && this.arrivals.size() < 2
+					&& this.arrivals.add(Thread.currentThread())) {
+				try {
+					this.barrier.await(10, TimeUnit.SECONDS);
+				}
+				catch (Exception ex) {
+					throw new IllegalStateException("Concurrent creation not reached", ex);
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Plants a symbolic link or a directory with the given permissions at a location just
+	 * before it is created.
+	 */
+	private static class Planter extends SecurityManager {
+
+		private final Path location;
+
+		private final Path linkTarget;
+
+		private final String permissions;
+
+		private volatile boolean planted;
+
+		Planter(Path location, Path linkTarget, String permissions) {
+			this.location = location;
+			this.linkTarget = linkTarget;
+			this.permissions = permissions;
+		}
+
+		@Override
+		public void checkPermission(Permission perm) {
+		}
+
+		@Override
+		public void checkPermission(Permission perm, Object context) {
+		}
+
+		@Override
+		public synchronized void checkWrite(String file) {
+			if (this.planted || !isLocation(file, this.location)) {
+				return;
+			}
+			this.planted = true;
+			try {
+				if (this.linkTarget != null) {
+					Files.createSymbolicLink(this.location, this.linkTarget);
+				}
+				else {
+					Files.createDirectory(this.location);
+					Files.setPosixFilePermissions(this.location, PosixFilePermissions.fromString(this.permissions));
+				}
+			}
+			catch (IOException ex) {
+				throw new IllegalStateException(ex);
+			}
+		}
+
 	}
 
 }
