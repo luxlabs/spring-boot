@@ -24,6 +24,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.boot.ApplicationHome;
 import org.springframework.boot.ApplicationTemp;
+import org.springframework.lang.UsesJava7;
 import org.springframework.util.Assert;
 
 /**
@@ -264,11 +266,10 @@ public abstract class AbstractEmbeddedServletContainerFactory extends AbstractCo
 	 * @param prefix servlet container name
 	 * @return the temp dir for given servlet container.
 	 */
+	@UsesJava7
 	protected File createTempDir(String prefix) {
 		try {
-			File tempDir = File.createTempFile(prefix + ".", "." + getPort());
-			tempDir.delete();
-			tempDir.mkdir();
+			File tempDir = Files.createTempDirectory(prefix + "." + getPort() + ".").toFile();
 			tempDir.deleteOnExit();
 			return tempDir;
 		}
