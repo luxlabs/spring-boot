@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Added by LuxLabs in 2026: tests for the atomic creation of the embedded container temp directories (CVE-2022-27772).
+ */
+
 package org.springframework.boot.context.embedded;
 
 import java.io.File;

@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Modified by LuxLabs in 2026: tests for the owner-only application temp directories (CVE-2026-40973).
+ */
+
 package org.springframework.boot;
 
 import java.io.File;

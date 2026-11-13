@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Modified by LuxLabs in 2026: directories are created with rwx------ permissions where POSIX attributes are supported, and existing or concurrently created directories are checked for type, permissions and owner, as in Spring Boot 3.5.14 (CVE-2026-40973).
+ */
+
 package org.springframework.boot;
 
 import java.io.File;

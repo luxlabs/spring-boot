@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Modified by LuxLabs in 2026: the empty root folder is created with Files.createTempDirectory, backport of upstream commit 667ccdae84822072f9ea1a27ed5c77964c71002d (CVE-2022-27772).
+ */
+
 package org.springframework.boot.test.mock.web;
 
 import java.io.File;

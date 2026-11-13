@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Modified by LuxLabs in 2026: test for the atomic creation of the empty root folder (CVE-2022-27772).
+ */
+
 package org.springframework.boot.test.mock.web;
 
 import java.io.File;
