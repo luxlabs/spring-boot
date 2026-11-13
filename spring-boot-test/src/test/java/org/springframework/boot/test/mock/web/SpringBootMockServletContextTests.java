@@ -21,9 +21,13 @@ import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.attribute.PosixFilePermissions;
 
 import javax.servlet.ServletContext;
 
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -93,6 +97,25 @@ public class SpringBootMockServletContextTests implements ServletContextAware {
 		});
 		assertThat(contents).isNotEqualTo(nullValue());
 		assertThat(contents.length).isEqualTo(0);
+	}
+
+	@Test
+	public void getRootUrlCreatesTemporaryDirectoryAtomically() throws Exception {
+		SpringBootMockServletContext context = new SpringBootMockServletContext("src/test/doesntexist") {
+			@Override
+			protected String getResourceLocation(String path) {
+				// Don't include the Spring Boot defaults for this test
+				return getResourceBasePathLocation(path);
+			};
+		};
+		URL resource = context.getResource("/");
+		File file = new File(URLDecoder.decode(resource.getPath(), "UTF-8"));
+		// Files.createTempDirectory("spr-servlet"), not createTempFile + delete + mkdirs
+		assertThat(file.getName()).startsWith("spr-servlet");
+		assertThat(Files.isDirectory(file.toPath(), LinkOption.NOFOLLOW_LINKS)).isTrue();
+		assertThat(file.list()).isEmpty();
+		Assume.assumeTrue(file.toPath().getFileSystem().supportedFileAttributeViews().contains("posix"));
+		assertThat(PosixFilePermissions.toString(Files.getPosixFilePermissions(file.toPath()))).isEqualTo("rwx------");
 	}
 
 	@Configuration

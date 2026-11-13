@@ -20,10 +20,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.lang.UsesJava7;
 import org.springframework.mock.web.MockServletContext;
 
 /**
@@ -85,6 +87,7 @@ public class SpringBootMockServletContext extends MockServletContext {
 	}
 
 	@Override
+	@UsesJava7
 	public URL getResource(String path) throws MalformedURLException {
 		URL resource = super.getResource(path);
 		if (resource == null && "/".equals(path)) {
@@ -93,9 +96,7 @@ public class SpringBootMockServletContext extends MockServletContext {
 			try {
 				if (this.emptyRootFolder == null) {
 					synchronized (this) {
-						File tempFolder = File.createTempFile("spr", "servlet");
-						tempFolder.delete();
-						tempFolder.mkdirs();
+						File tempFolder = Files.createTempDirectory("spr-servlet").toFile();
 						tempFolder.deleteOnExit();
 						this.emptyRootFolder = tempFolder;
 					}
