@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Modified by LuxLabs in 2026: Tomcat 9 compatibility, the accept count is applied with setAcceptCount instead of setBacklog (1.5.22.1.RELEASE).
+ */
+
 package org.springframework.boot.autoconfigure.web;
 
 import java.io.File;

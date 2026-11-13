@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<!-- Modified by LuxLabs in 2026: version 1.5.22.2.RELEASE of the LuxLabs fork, see luxlabs/README.md -->
+	<!-- Modified by LuxLabs in 2026: LuxLabs fork version and URLs, Tomcat 9.0.123, Servlet API 4.0.1 and the fork versions of the rebuilt modules (1.5.22.1.RELEASE); version 1.5.22.2.RELEASE. See luxlabs/README.md -->
 	<groupId>org.springframework.boot</groupId>
 	<artifactId>spring-boot-dependencies</artifactId>
 	<version>1.5.22.2.RELEASE</version>

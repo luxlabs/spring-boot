@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Modified by LuxLabs in 2026: Tomcat 9 compatibility, the tests assert the retained Boot 1.5 defaults for maximum connections and internal proxies instead of the Tomcat defaults (1.5.22.1.RELEASE).
+ */
+
 package org.springframework.boot.autoconfigure.web;
 
 import java.io.File;

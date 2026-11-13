@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Added by LuxLabs in 2026: Tomcat 9 compatibility tests for the Servlet 4 API and the cipher defaults (1.5.22.1.RELEASE).
+ */
+
 package org.springframework.boot.context.embedded.tomcat;
 
 import java.lang.reflect.Method;

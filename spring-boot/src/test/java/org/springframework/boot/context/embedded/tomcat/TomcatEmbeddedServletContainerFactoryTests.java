@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Modified by LuxLabs in 2026: Tomcat 9 compatibility, a real connector replaces the mocked one in the stopped-connector test (1.5.22.1.RELEASE).
+ */
+
 package org.springframework.boot.context.embedded.tomcat;
 
 import java.io.File;

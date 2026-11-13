@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Modified by LuxLabs in 2026: Tomcat 9 compatibility, setCompressibleMimeType is used and Tomcat's default ciphers are kept when server.ssl.ciphers is unset or empty (1.5.22.1.RELEASE).
+ */
+
 package org.springframework.boot.context.embedded.tomcat;
 
 import java.io.File;
