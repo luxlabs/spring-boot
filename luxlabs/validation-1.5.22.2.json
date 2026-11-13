@@ -6,7 +6,7 @@
   "tomcat": "9.0.123",
   "servlet_api": "4.0.1",
   "minimum_java": "8",
-  "tested_utc": "2026-11-13T20:33:41Z",
+  "tested_utc": "2026-11-13T20:53:00Z",
   "toolchain": {
     "maven": "3.10.0",
     "source_build": "Temurin 8.0.504",
@@ -85,5 +85,6 @@
     "checks": 94
   },
   "scope": "Selected source tests, complete spring-boot and spring-boot-test suites compared with 1.5.22.1.RELEASE, and four explicit Boot web auto-configuration contexts. No complete upstream suite or application business-process certification. The Windows behaviour of ApplicationTemp is not tested.",
-  "generated_resources": "Log4j2Plugins.dat (spring-boot), spring-configuration-metadata.json and spring-autoconfigure-metadata.properties (spring-boot-autoconfigure) have the same entries as upstream v1.5.22.RELEASE in a build-dependent order; the properties file also carries the build date. All other jar resources are identical to upstream apart from the manifest, the Maven metadata and luxlabs-fork.properties"
+  "generated_resources": "Log4j2Plugins.dat (spring-boot), spring-configuration-metadata.json and spring-autoconfigure-metadata.properties (spring-boot-autoconfigure) are checked for equivalence with the upstream v1.5.22.RELEASE copies in luxlabs/upstream-resources and replaced with their upstream bytes. The jars differ from upstream only in the changed classes and sources, the manifest, the Maven metadata and luxlabs-fork.properties",
+  "license_notices": "Every file that differs from upstream v1.5.22.RELEASE carries a LuxLabs modification notice (Apache License 2.0, section 4(b))"
 }
